@@ -48,12 +48,14 @@ For assistance with breaking changes, see [MIGRATION.md](docs/MIGRATION.md).
 ```yaml
 - uses: actions/download-artifact@v4
   with:
-    # Name of the artifact to download.
+    # Display name of the artifact to download.
+    # This is different from the file name of the artifact, which will be the same as the original uploaded file.
     # If unspecified, all artifacts for the run are downloaded.
     # Optional.
     name:
 
-    # Destination path. Supports basic tilde expansion.
+    # Destination directory. Supports basic tilde expansion. Note that this a directory, not a file.
+    # This is different behavior from the `path` input to upload-artifact action.
     # Optional. Default is $GITHUB_WORKSPACE
     path:
 
@@ -88,7 +90,7 @@ For assistance with breaking changes, see [MIGRATION.md](docs/MIGRATION.md).
 
 | Name | Description | Example |
 | - | - | - |
-| `download-path` | Absolute path where the artifact(s) were downloaded | `/tmp/my/download/path` |
+| `download-path` | Absolute path of the directory where the artifact(s) were downloaded | `/tmp/my/download/path` |
 
 ## Examples
 
@@ -97,13 +99,23 @@ For assistance with breaking changes, see [MIGRATION.md](docs/MIGRATION.md).
 Download to current working directory (`$GITHUB_WORKSPACE`):
 
 ```yaml
-steps:
-- uses: actions/download-artifact@v4
-  with:
-    name: my-artifact
-- name: Display structure of downloaded files
-  run: ls -R
+jobs:
+  upload:
+    steps:
+    - uses: actions/upload-artifact@v4
+      with:
+        name: my-artifact
+        path: my-file.txt
+  download:
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: my-artifact
+    - name: Display structure of downloaded files
+      run: ls -R
 ```
+
+The output of `ls -R` above will show `my-file.txt`.
 
 Download to a specific directory (also supports `~` expansion):
 
@@ -120,7 +132,7 @@ steps:
 
 ### Download All Artifacts
 
-If the `name` input parameter is not provided, all artifacts will be downloaded. To differentiate between downloaded artifacts, by default a directory denoted by the artifacts name will be created for each individual artifact. This behavior can be changed with the `merge-multiple` input parameter.
+If the `name` input parameter is not provided, all artifacts will be downloaded. To differentiate between downloaded artifacts, by default a directory denoted by the artifact's name will be created for each individual artifact. This behavior can be changed with the `merge-multiple` input parameter.
 
 Example, if there are two artifacts `Artifact-A` and `Artifact-B`, and the directory is `etc/usr/artifacts/`, the directory structure will look like this:
 
