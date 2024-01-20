@@ -21,13 +21,15 @@ jobs:
         with:
           path: path/to/my-other-file.txt
       - name: Create a single file nested in some other directory
-        run: mkdir -p another/path/to/my-other-file.txt && echo 'second file' > another/path/to/my-other-file.txt
+        run: mkdir -p another/path/to/ && echo 'second file' > another/path/to/my-other-file.txt
       - name: Upload a single file nested in some other directory with a display name
         uses: actions/upload-artifact@v4
         with:
           path: another/path/to/my-other-file.txt
           name: other-file
   download:
+    needs:
+      - upload
     runs-on: ubuntu-22.04
     steps:
       - name: Download a single file
