@@ -7,7 +7,7 @@ jobs:
   upload:
     runs-on: ubuntu-22.04
     steps:
-      - run: mkdir -p path/to/ && echo 'first dir' > my-file.txt
+      - run: mkdir -p path/to/ && echo 'first dir' > path/to/my-file.txt
       - uses: actions/upload-artifact@v4
         with:
           path: path/to/
