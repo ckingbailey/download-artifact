@@ -7,31 +7,46 @@ jobs:
   upload:
     runs-on: ubuntu-22.04
     steps:
-      - run: touch my-file.txt
-      - run: mkdir -p path/to && touch path/to/my-other-file.txt
-      - uses: actions/upload-artifact@v4
+      - name: Create a single file
+        run: touch my-file.txt
+      - name: Upload a single file
+        uses: actions/upload-artifact@v4
         with:
           path: my-file.txt
           name: my-file
-      - uses: actions/upload-artifact@v4
+      - name: Create a single file nested in some directory
+        run: mkdir -p path/to && echo 'first file' > path/to/my-other-file.txt
+      - name: Upload a single file nested in some directory without a display name
+        uses: actions/upload-artifact@v4
         with:
           path: path/to/my-other-file.txt
-      - uses: actions/upload-artifact@v4
+      - name: Create a single file nested in some other directory
+        run: mkdir -p another/path/to/my-other-file.txt && echo 'second file' > another/path/to/my-other-file.txt
+      - name: Upload a single file nested in some other directory with a display name
+        uses: actions/upload-artifact@v4
         with:
-          path: path/to/my-other-file.txt
+          path: another/path/to/my-other-file.txt
           name: other-file
   download:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download a single file
+        uses: actions/download-artifact@v4
         with:
           name: my-file
       - run: ls
-      - uses: actions/download-artifact@v4
+      - run: mkdir -p path/of
+      - name: Download a second artifact into a directory
+        uses: actions/download-artifact@v4
         with:
           name: other-file
+          path: path/of
       - run: ls -R
-      - uses: actions/download-artifact@v4
+      - run: cat path/of/my-other-file.txt
+      - name: Download a third file into same directory
+        uses: actions/download-artifact@v4
         with:
           name: artifact
+          path: path/of
       - run: ls -R
+      - run: cat path/of/my-other-file.txt
